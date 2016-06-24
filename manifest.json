@@ -1,0 +1,25 @@
+{
+  "manifest_version": 2,
+  "name": "AEM Productivity Tools",
+  "version": "0.1",
+  "author": "Kevin Weber",
+  "homepage_url": "http://kevinw.de",
+  "description": "Add BrowserSync script to all pages with host 'localhost:4502'.",
+
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "js": ["script.js"],
+      // "css": ["style.css"],
+      "run_at": "document_start"
+    }
+  ],
+
+  "permissions": [
+    "tabs",
+    "storage" // https://developer.chrome.com/extensions/storage
+  ]
+}
