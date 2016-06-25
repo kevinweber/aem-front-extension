@@ -1,7 +1,31 @@
 (function () {
   'use strict';
 
-  if (location.host !== "localhost:4502") {
+  function isHostAllowed() {
+    return location.host === "localhost:4502";
+  }
+
+  function isPathAllowed() {
+    var path,
+      allowedPaths,
+      i,
+      l;
+
+    path = location.pathname;
+    allowedPaths = ["/content", "/cf#", "/editor.html"];
+
+    for (i = 0, l = allowedPaths.length; i < l; i += 1) {
+      if (path.substring(0, allowedPaths[i].length) === allowedPaths[i]) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  if (!isHostAllowed()) {
+    return;
+  } else if (isHostAllowed() && !isPathAllowed()) {
     return;
   }
 
