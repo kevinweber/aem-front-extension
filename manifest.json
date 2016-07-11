@@ -18,10 +18,11 @@
     }
   ],
 
-  //"options_ui": {
-  //  "page": "options.html",
-  //  "chrome_style": true
-  //},
+  "options_ui": {
+    "page": "options/index.html",
+    "chrome_style": true
+  },
+
   "icons": {
     "16": "img/icon16.png",
     "24": "img/icon24.png",
