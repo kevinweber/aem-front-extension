@@ -2,8 +2,9 @@
 (function () {
   'use strict';
 
-  var storage,
-    defaults = aemProductivityTools.defaults;
+  var extension = aemProductivityTools,
+    defaults = extension.defaults,
+    storage;
 
   /**
    * All BrowserSync-related functions
@@ -53,15 +54,6 @@
   }
 
 
-  /**
-   * Handle this extension's storage
-   */
-  function clearStorage() {
-    chrome.storage.sync.clear();
-    console.log('Storage cleared.');
-    console.table(storage);
-  }
-
   function loadStorage() {
     chrome.storage.sync.get(defaults, function (obj) {
       storage = obj;
@@ -71,15 +63,7 @@
     });
 
     // Helpful for testing/debugging:
-    // clearStorage();
-  }
-
-  function updateStorage(data) {
-    chrome.storage.sync.set(data, function () {});
-  }
-
-  function initStorage() {
-    loadStorage();
+    // extension.clearStorage();
   }
 
   /**
@@ -87,7 +71,7 @@
    */
   document.addEventListener("DOMContentLoaded", function () {
     window.requestAnimationFrame(function () {
-      initStorage();
+      loadStorage();
       window.requestAnimationFrame(initBrowserSync);
     });
   });

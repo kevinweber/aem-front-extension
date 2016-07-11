@@ -1,9 +1,12 @@
+/*global chrome */
 var aemProductivityTools = aemProductivityTools || {};
 
-aemProductivityTools.defaults = (function () {
+aemProductivityTools = (function () {
   'use strict';
 
-  var defaults = {
+  var extension = {};
+
+  extension.defaults = {
     "STATIC": {
       // Using this value we'll be able to fix issues that might occur with future updates of this extension.
       // We can increase this number for a big change, and then check for the stored version and provide fallbacks.
@@ -14,5 +17,15 @@ aemProductivityTools.defaults = (function () {
     }
   };
 
-  return defaults;
+  extension.clearStorage = function () {
+    chrome.storage.sync.clear();
+    console.log('Storage cleared.');
+    console.table(storage);
+  }
+
+  extension.updateStorage = function (data) {
+    chrome.storage.sync.set(data, function () {});
+  }
+
+  return extension;
 }());

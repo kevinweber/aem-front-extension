@@ -2,8 +2,9 @@
 (function () {
   'use strict';
 
-  var storage,
-    defaults = aemProductivityTools.defaults;
+  var extension = aemProductivityTools,
+    defaults = extension.defaults,
+    storage;
 
   function initOptions() {
     if (!storage || !storage.browserSync || typeof storage.browserSync.isDisabled === 'undefined') {
@@ -21,15 +22,11 @@
     });
   }
 
-  function updateStorage(data) {
-    chrome.storage.sync.set(data, function () {});
-  }
-
   function setBrowserSyncStatus() {
     var status = document.getElementById('browsersync-status').checked;
 
     storage.browserSync.isDisabled = status;
-    updateStorage(storage);
+    extension.updateStorage(storage);
   }
 
   function initEvents() {
