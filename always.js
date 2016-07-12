@@ -44,7 +44,7 @@
   }
 
   function initBrowserSync() {
-    if (!isHostAllowed() || storage.browserSync.isDisabled) {
+    if (!isHostAllowed() || !storage || storage.browserSync.isDisabled) {
       return;
     } else if (isHostAllowed() && !isPathAllowed()) {
       return;
