@@ -84,7 +84,7 @@
 
   function openWcmEdit() {
     var url = currentTab.url,
-      firstPart = url.match(/^[a-z]*:\/\/[a-z.:0-9]*\//i)[0],
+      firstPart = url.match(/^[a-z]*:\/\/[a-z.:\-0-9]+\//i)[0],
       lastPart = url.substring(firstPart.length, url.length);
 
     url = firstPart + "editor.html/" + lastPart;
