@@ -1,4 +1,16 @@
 /*global chrome */
+String.prototype.replaceOriginal = String.prototype.replace;
+String.prototype.replace = function () {
+  var string = this;
+
+  if (string.indexOf(arguments[0]) !== -1) {
+    string = string.replaceOriginal(arguments[0], arguments[1]);
+  }
+
+  return string;
+};
+
+
 var aemProductivityTools = aemProductivityTools || {};
 
 aemProductivityTools = (function () {
@@ -21,11 +33,11 @@ aemProductivityTools = (function () {
     chrome.storage.sync.clear();
     console.log('Storage cleared.');
     console.table(storage);
-  }
+  };
 
   extension.updateStorage = function (data) {
     chrome.storage.sync.set(data, function () {});
-  }
+  };
 
   return extension;
 }());

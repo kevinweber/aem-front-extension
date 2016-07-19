@@ -56,10 +56,21 @@
     addScriptBrowserSync();
   }
 
+  function setCurrentLocation() {
+    storage.location = {};
+    storage.location.href = location.href;
+    storage.location.origin = location.origin;
+    storage.location.pathname = location.pathname;
+    storage.location.search = location.search;
+
+    extension.updateStorage(storage);
+  }
 
   function loadStorage() {
     chrome.storage.sync.get(defaults, function (obj) {
       storage = obj;
+
+      setCurrentLocation();
 
       // Helpful for testing/debugging:
       // console.table(storage);
