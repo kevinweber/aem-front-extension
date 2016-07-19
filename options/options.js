@@ -4,7 +4,8 @@
 
   var extension = aemProductivityTools,
     defaults = extension.defaults,
-    storage;
+    storage,
+    currentTab;
 
   function initOptions() {
     if (!storage || !storage.browserSync || typeof storage.browserSync.isDisabled === 'undefined') {
@@ -12,6 +13,15 @@
     }
 
     document.getElementById('browsersync-status').checked = storage.browserSync.isDisabled;
+  }
+
+  function loadCurrentTab() {
+    chrome.tabs.query({
+      active: true,
+      lastFocusedWindow: true
+    }, function (tabs) {
+      currentTab = tabs[0];
+    });
   }
 
   function loadStorage() {
@@ -63,7 +73,7 @@
   }
 
   function openWcmDisabled() {
-    var url = storage.location.href;
+    var url = currentTab.url;
 
     url = url.replace('editor.html/', '');
     url = url.replace('cf#/', '');
@@ -73,7 +83,11 @@
   }
 
   function openWcmEdit() {
-    var url = storage.location.origin + '/editor.html' + storage.location.pathname + storage.location.search;
+    var url = currentTab.url,
+      firstPart = url.match(/^[a-z]*:\/\/[a-z.:0-9]*\//i)[0],
+      lastPart = url.substring(firstPart.length, url.length);
+
+    url = firstPart + "editor.html/" + lastPart;
 
     url = url.replace('&wcmmode=disabled', '');
     url = url.replace('?wcmmode=disabled&', '?');
@@ -94,7 +108,10 @@
   }
 
   function init() {
-    document.addEventListener('DOMContentLoaded', loadStorage);
+    document.addEventListener('DOMContentLoaded', function () {
+      loadCurrentTab();
+      loadStorage();
+    });
     initEvents();
   }
 
