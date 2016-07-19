@@ -87,7 +87,11 @@
       firstPart = url.match(/^[a-z]*:\/\/[a-z.:\-0-9]+\//i)[0],
       lastPart = url.substring(firstPart.length, url.length);
 
-    url = firstPart + "editor.html/" + lastPart;
+    if (lastPart.indexOf("editor.html/") === -1) {
+      url = firstPart + "editor.html/" + lastPart;
+    } else {
+      url = firstPart + lastPart;
+    }
 
     url = url.replace('&wcmmode=disabled', '');
     url = url.replace('?wcmmode=disabled&', '?');
