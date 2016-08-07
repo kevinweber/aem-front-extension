@@ -35,7 +35,7 @@
     var script = document.createElement("script");
 
     script.setAttribute("async", "true");
-    script.setAttribute("src", "http://" + location.hostname + ":3000/browser-sync/browser-sync-client.2.13.0.js");
+    script.setAttribute("src", "http://" + location.hostname + ":3000/browser-sync/browser-sync-client.2.14.0.js");
 
     document.body.appendChild(script);
 
