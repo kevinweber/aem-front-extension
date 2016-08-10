@@ -1,7 +1,8 @@
 {
   "manifest_version": 2,
   "name": "AEM Front Extension",
-  "version": "0.3",
+  "short_name": "AEM Front",
+  "version": "0.0.1",
   "author": "Kevin Weber",
   "homepage_url": "http://kevinw.de",
   "description": "Add BrowserSync script to all relevant AEM pages on localhost:4502. Plus extras to get things done faster.",
@@ -16,6 +17,16 @@
       "run_at": "document_start"
     }
   ],
+
+  "externally_connectable": {
+    "matches": [
+      "*://*.kevinw.de/*",
+      "*://*.kevinweber.org/*",
+      "*://*.kevinweber.co/*",
+      "*://*.kevinchrisweber.com/*"
+    ],
+    "accepts_tls_channel_id": false
+  },
 
   "options_ui": {
     "page": "options/index.html",
