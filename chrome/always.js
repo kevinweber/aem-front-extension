@@ -7,6 +7,17 @@
     storage;
 
   /**
+   * By injecting a unique code snippet, websites can see that the user is using this extension, and customize the UX
+   */
+  function injectIdentifier() {
+    var element = document.createElement("div");
+    element.setAttribute("id", "aem-front-extension");
+    element.setAttribute("data-version", defaults.STATIC.extensionVersion);
+    element.style.display = 'none';
+    document.body.appendChild(element);
+  }
+  
+  /**
    * All BrowserSync-related functions
    */
   function isHostAllowed() {
@@ -72,6 +83,8 @@
    * Initiate everything
    */
   document.addEventListener("DOMContentLoaded", function () {
+    injectIdentifier();
+    
     window.requestAnimationFrame(function () {
       loadStorage();
       window.requestAnimationFrame(initBrowserSync);
