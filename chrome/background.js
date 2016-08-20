@@ -3,6 +3,15 @@
 (function () {
   'use strict';
 
+  var syncStorage = chrome.storage.sync,
+    OPTIONS = {
+      VERSION: chrome.app.getDetails().version
+    };
+
+
+  //  chrome.storage.sync.clear();
+
+
   function splitUrl(url) {
     var parseUrl = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/,
       result = parseUrl.exec(url),
@@ -52,31 +61,53 @@
     return true;
   }
 
-  //  function initBrowserSync() {
-  //    if (isHostAllowed() && !storage) {
-  //      addScriptBrowserSync();
-  //      return;
-  //    } else if (!isHostAllowed() || !storage || ) {
-  //      return;
-  //    } else if (isHostAllowed() && !isPathAllowed()) {
-  //      return;
-  //    }
-  //
-  //    addScriptBrowserSync();
-  //  }
+  syncStorage.get(null, function (items) {
+    //    console.debug('STORAGE:', items);
+
+    // Set version number
+    items.extension = items.extension || {};
+    items.extension.version = OPTIONS.VERSION;
+
+    // Set up default options
+    items.options = items.options || {};
+    items.options.browserSync = items.options.browserSync || {};
+    items.options.browserSync.isDisabled = items.options.browserSync.isDisabled || false;
+
+    // TODO: Add every tab to temporary storage
+    // items.tabs = items.tabs || {};
+    // ...
+
+    syncStorage.set(items);
+  });
 
   function shouldAddScript(tab) {
-    // TODO: Validate against stored options (storage.browserSync.isDisabled)
-    if (isValidUrl(tab.url)) {
-      chrome.tabs.sendMessage(tab.id, "add-script");
-    }
+    syncStorage.get('options', function (items) {
+      if (!items.options.browserSync.isDisabled && isValidUrl(tab.url)) {
+        chrome.tabs.sendMessage(tab.id, {
+          task: "add-script"
+        });
+      }
+    })
   }
 
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+    //    if (changeInfo.status === "loading") {
+    //      chrome.tabs.sendMessage(tabId, {
+    //        task: "add-identifier",
+    //        data: OPTIONS.VERSION
+    //      });
+    //    }
+
     if (changeInfo.status === "complete") {
-      console.debug('Updated page.', tabId, changeInfo, tab, tab.url);
+      //      console.debug('Updated page.', tabId, changeInfo, tab, tab.url);
 
       shouldAddScript(tab);
+    }
+  });
+
+  chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if (message.task === "update-storage") {
+      syncStorage.set(message.data);
     }
   });
 }());

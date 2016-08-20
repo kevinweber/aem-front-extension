@@ -2,17 +2,11 @@
 (function () {
   'use strict';
 
-  var extension = aemProductivityTools,
-    defaults = extension.defaults,
-    storage,
+  var storage,
     currentTab;
 
   function initOptions() {
-    if (!storage || !storage.browserSync || typeof storage.browserSync.isDisabled === 'undefined') {
-      return;
-    }
-
-    document.getElementById('browsersync-status').checked = storage.browserSync.isDisabled;
+    document.getElementById('browsersync-status').checked = storage.options.browserSync.isDisabled;
   }
 
   function loadCurrentTab() {
@@ -35,8 +29,12 @@
   function setBrowserSyncStatus() {
     var status = document.getElementById('browsersync-status').checked;
 
-    storage.browserSync.isDisabled = status;
-    extension.updateStorage(storage);
+    storage.options.browserSync.isDisabled = status;
+
+    chrome.runtime.sendMessage({
+      task: "update-storage",
+      data: storage
+    });
   }
 
   /*
