@@ -2,6 +2,10 @@
 (function () {
   'use strict';
 
+  chrome.runtime.sendMessage({
+    task: "popup-opened"
+  });
+
   var storage,
     currentTab;
 

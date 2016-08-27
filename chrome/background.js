@@ -6,6 +6,10 @@
   var syncStorage = chrome.storage.sync,
     OPTIONS = {
       VERSION: chrome.app.getDetails().version
+    },
+    FLAGS = {
+      iconClicked: false,
+      popupOpened: false
     };
 
   function clearStorage() {
@@ -120,6 +124,10 @@
     if (message.task === "clear-storage") {
       clearStorage();
     }
+
+    if (message.task === "popup-opened") {
+      FLAGS.popupOpened = true;
+    }
   });
 
   chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
@@ -130,5 +138,34 @@
         syncStorage.set(items);
       }
     });
+  });
+
+  function setPopup(url) {
+    // Doc: https://developer.chrome.com/extensions/browserAction#method-setPopup
+    chrome.browserAction.setPopup({
+      popup: url
+    });
+  }
+
+  chrome.browserAction.onClicked.addListener(function () {
+    var CONTROL_TIME = 400;
+
+    if (FLAGS.iconClicked === false) {
+      FLAGS.iconClicked = true;
+
+      setPopup("options/index.html");
+
+      setTimeout(function () {
+        // Always reset popup after CONTROL_TIME so we can update the icon if user doesn't double-click
+        setPopup("");
+
+        if (!FLAGS.popupOpened) {
+          console.log("TODO: UPDATE ICON");
+        }
+
+        FLAGS.iconClicked = false;
+        FLAGS.popupOpened = false;
+      }, CONTROL_TIME);
+    }
   });
 }());
