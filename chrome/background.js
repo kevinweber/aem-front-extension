@@ -74,21 +74,27 @@
     items.options.browserSync = items.options.browserSync || {};
     items.options.browserSync.isDisabled = items.options.browserSync.isDisabled || false;
 
-    // TODO: Add every tab to temporary storage
-    // items.tabs = items.tabs || {};
-    // ...
+    items.tabs = items.tabs || {};
 
     syncStorage.set(items);
   });
 
   function shouldAddScript(tab) {
-    syncStorage.get('options', function (items) {
+    syncStorage.get(['options', 'tabs'], function (items) {
       if (!items.options.browserSync.isDisabled && isValidUrl(tab.url)) {
         chrome.tabs.sendMessage(tab.id, {
           task: "add-script"
         });
+
+        items.tabs[tab.id] = {
+          status: "default",
+          url: tab.url
+        };
+
+        syncStorage.set(items);
+        console.log('should add', items);
       }
-    })
+    });
   }
 
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
@@ -115,5 +121,14 @@
       clearStorage();
     }
   });
+
+  chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
+    syncStorage.get(['tabs'], function (items) {
+
+      if (items.tabs[tabId]) {
+        delete items.tabs[tabId];
+        syncStorage.set(items);
+      }
+    });
   });
 }());
