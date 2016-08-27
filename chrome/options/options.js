@@ -27,13 +27,15 @@
   }
 
   function setBrowserSyncStatus() {
-    var status = document.getElementById('browsersync-status').checked;
+    chrome.storage.sync.get('options', function (storage) {
+      var status = document.getElementById('browsersync-status').checked;
 
-    storage.options.browserSync.isDisabled = status;
+      storage.options.browserSync.isDisabled = status;
 
-    chrome.runtime.sendMessage({
-      task: "update-storage",
-      data: storage
+      chrome.runtime.sendMessage({
+        task: "update-storage",
+        data: storage
+      });
     });
   }
 
@@ -98,6 +100,12 @@
     openUrl(url);
   }
 
+  function clearStorage() {
+    chrome.runtime.sendMessage({
+      task: "clear-storage"
+    });
+  }
+
   function initEvents() {
     document.getElementById('browsersync-status')
       .addEventListener('change', setBrowserSyncStatus);
@@ -107,6 +115,9 @@
 
     document.getElementById('wcm-edit')
       .addEventListener('click', openWcmEdit);
+
+    document.getElementById('clear-storage')
+      .addEventListener('click', clearStorage);
   }
 
   function init() {

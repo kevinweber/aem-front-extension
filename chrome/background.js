@@ -8,9 +8,10 @@
       VERSION: chrome.app.getDetails().version
     };
 
-
-  //  chrome.storage.sync.clear();
-
+  function clearStorage() {
+    console.info("Storage cleared.");
+    chrome.storage.sync.clear();
+  }
 
   function splitUrl(url) {
     var parseUrl = /^(?:([A-Za-z]+):)?(\/{0,3})([0-9.\-A-Za-z]+)(?::(\d+))?(?:\/([^?#]*))?(?:\?([^#]*))?(?:#(.*))?$/,
@@ -62,7 +63,7 @@
   }
 
   syncStorage.get(null, function (items) {
-    //    console.debug('STORAGE:', items);
+    console.debug('STORAGE:', items);
 
     // Set version number
     items.extension = items.extension || {};
@@ -109,5 +110,10 @@
     if (message.task === "update-storage") {
       syncStorage.set(message.data);
     }
+
+    if (message.task === "clear-storage") {
+      clearStorage();
+    }
+  });
   });
 }());

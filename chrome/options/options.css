@@ -14,6 +14,13 @@ h1 {
   padding: 4px 10px;
 }
 
+.dev-tools[hidden] {
+  height: 1px;
+  margin-bottom: -1px;
+  opacity: 0;
+  overflow: hidden;
+}
+
 footer {
   border-top: 3px dashed #4e97cc;
 }
