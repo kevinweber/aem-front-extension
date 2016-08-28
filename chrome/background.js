@@ -25,7 +25,22 @@
     chrome.storage.sync.clear();
   }
 
-  function setIcon(path, tabId) {
+  function setIcon(status, tabId) {
+    var path;
+
+    switch (status) {
+    case "on":
+      path = IMG.status.off;
+      break;
+    case "off":
+      path = IMG.status.on;
+      break;
+    case "default":
+      // TODO: Adjust defaultOn/defaultOff depending on global setting
+      path = IMG.status.defaultOn;
+      break;
+    }
+
     chrome.browserAction.setIcon({
       path: path,
       tabId: tabId
@@ -101,17 +116,25 @@
   function shouldAddScript(tab) {
     syncStorage.get(['options', 'tabs'], function (items) {
       if (!items.options.browserSync.isDisabled && isValidUrl(tab.url)) {
+        var status;
+        if (items.tabs[tab.id]) {
+          status = items.tabs[tab.id].status || "default";
+        } else {
+          status = "default";
+        }
+
+        setIcon(status, tab.id);
+
+        items.tabs[tab.id] = {
+          status: status,
+          url: tab.url
+        };
+
         chrome.tabs.sendMessage(tab.id, {
           task: "add-script"
         });
 
-        items.tabs[tab.id] = {
-          status: "default",
-          url: tab.url
-        };
-
         syncStorage.set(items);
-        console.log('should add', items);
       }
     });
   }
@@ -119,14 +142,17 @@
   function updateTabStatus(tabId) {
     syncStorage.get(['tabs'], function (items) {
       if (items.tabs[tabId]) {
-        if (items.tabs[tabId].status === "on") {
-          items.tabs[tabId].status = "off";
-          setIcon(IMG.status.off, tabId);
+        var status = items.tabs[tabId].status;
+
+        if (status === "on") {
+          status = "off";
         } else {
-          items.tabs[tabId].status = "on";
-          setIcon(IMG.status.on, tabId);
+          status = "on";
         }
 
+        setIcon(status, tabId);
+
+        items.tabs[tabId].status = status;
         syncStorage.set(items);
       }
     });
