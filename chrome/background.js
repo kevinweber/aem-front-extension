@@ -15,6 +15,9 @@
         off: "img/icons/icon-reload-off.png"
       }
     },
+    POPUPS = {
+      global: "options/index.html"
+    },
     FLAGS = {
       iconClicked: false,
       popupOpened: false
@@ -174,20 +177,6 @@
     }
   });
 
-  chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    if (message.task === "update-storage") {
-      syncStorage.set(message.data);
-    }
-
-    if (message.task === "clear-storage") {
-      clearStorage();
-    }
-
-    if (message.task === "popup-opened") {
-      FLAGS.popupOpened = true;
-    }
-  });
-
   chrome.tabs.onRemoved.addListener(function (tabId, removeInfo) {
     syncStorage.get(['tabs'], function (items) {
 
@@ -211,7 +200,7 @@
     if (FLAGS.iconClicked === false) {
       FLAGS.iconClicked = true;
 
-      setPopup("options/index.html");
+      setPopup(POPUPS.global);
 
       setTimeout(function () {
         // Always reset popup after CONTROL_TIME so we can update the icon if user doesn't double-click
@@ -224,6 +213,20 @@
         FLAGS.iconClicked = false;
         FLAGS.popupOpened = false;
       }, CONTROL_TIME);
+    }
+  });
+
+  chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+    if (message.task === "update-storage") {
+      syncStorage.set(message.data);
+    }
+
+    if (message.task === "clear-storage") {
+      clearStorage();
+    }
+
+    if (message.event === "popup-opened") {
+      FLAGS.popupOpened = true;
     }
   });
 }());

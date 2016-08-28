@@ -3,7 +3,7 @@
   'use strict';
 
   chrome.runtime.sendMessage({
-    task: "popup-opened"
+    event: "popup-opened"
   });
 
   var storage,
