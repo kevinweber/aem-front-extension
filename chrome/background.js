@@ -33,10 +33,10 @@
 
     switch (status) {
     case "on":
-      path = IMG.status.off;
+      path = IMG.status.on;
       break;
     case "off":
-      path = IMG.status.on;
+      path = IMG.status.off;
       break;
     case "default":
       // TODO: Adjust defaultOn/defaultOff depending on global setting
