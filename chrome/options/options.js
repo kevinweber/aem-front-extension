@@ -12,10 +12,6 @@
     storage,
     currentTab;
 
-  function initOptions() {
-    document.getElementById(IDS.defaultStatus).checked = storage.options.reloadByDefault;
-  }
-
   function loadCurrentTab() {
     chrome.tabs.query({
       active: true,
@@ -25,11 +21,22 @@
     });
   }
 
-  function loadStorage() {
-    chrome.storage.sync.get(null, function (obj) {
-      storage = obj;
+  function loadOptions() {
+    chrome.storage.sync.get('options', function (items) {
+      var value = items.options.reloadByDefault,
+        selector;
 
-      initOptions();
+      switch (value) {
+      case true:
+        value = "on";
+        break;
+      case false:
+        value = "off";
+        break;
+      }
+
+      selector = '#' + IDS.defaultStatus + ' option[value="' + value + '"]';
+      document.querySelector(selector).setAttribute('selected', 'selected');
     });
   }
 
@@ -142,7 +149,7 @@
   function init() {
     document.addEventListener('DOMContentLoaded', function () {
       loadCurrentTab();
-      loadStorage();
+      loadOptions();
     });
     initEvents();
   }
