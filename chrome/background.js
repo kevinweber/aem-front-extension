@@ -24,6 +24,61 @@
     },
     globalDefaultStatus;
 
+  function isPositiveInteger(x) {
+    return /^\d+$/.test(x);
+  }
+
+  /**
+   * Compare two software version numbers (e.g. 1.7.1)
+   * Returns:
+   *
+   *  0 if they're identical
+   *  Negative if v1 < v2
+   *  Positive if v1 > v2
+   *  NaN if they are in the wrong format
+   *
+   * Based on: http://jsfiddle.net/ripper234/Xv9WL/28/
+   */
+  function compareVersionNumbers(v1, v2) {
+    var v1parts = v1.split('.'),
+      v2parts = v2.split('.'),
+      i;
+
+    // First, validate both numbers are true version numbers
+    function validateParts(parts) {
+      for (i = 0; i < parts.length; i += 1) {
+        if (!isPositiveInteger(parts[i])) {
+          return false;
+        }
+      }
+      return true;
+    }
+    if (!validateParts(v1parts) || !validateParts(v2parts)) {
+      return NaN;
+    }
+
+    for (i = 0; i < v1parts.length; i += 1) {
+      if (v2parts.length === i) {
+        return 1;
+      }
+
+      if (v1parts[i] === v2parts[i]) {
+        continue;
+      }
+      if (v1parts[i] > v2parts[i]) {
+        return 1;
+      }
+
+      return -1;
+    }
+
+    if (v1parts.length !== v2parts.length) {
+      return -1;
+    }
+
+    return 0;
+  }
+
   function clearStorage() {
     console.info("Storage cleared.");
     chrome.storage.sync.clear();
@@ -123,7 +178,11 @@
 
     // Set version number
     items.extension = items.extension || {};
-    // TODO: Clear storage if stored version is below current version
+
+    // Cleanup stored data from previous version of this extension
+    if (compareVersionNumbers(items.extension.version, "0.1") < 0) {
+      clearStorage();
+    }
     items.extension.version = OPTIONS.VERSION;
 
     // Set up default options
