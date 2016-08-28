@@ -19,7 +19,7 @@
   ],
 
   "background": {
-    "scripts": ["background.js"],
+    "scripts": ["base.js", "background.js"],
     "persistent": false
   },
 

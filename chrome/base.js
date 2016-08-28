@@ -1,4 +1,5 @@
 /*global chrome */
+
 String.prototype.replaceOriginal = String.prototype.replace;
 String.prototype.replace = function () {
   var string = this;
@@ -8,4 +9,8 @@ String.prototype.replace = function () {
   }
 
   return string;
+};
+
+Element.prototype.remove = function () {
+  this.parentElement.removeChild(this);
 };

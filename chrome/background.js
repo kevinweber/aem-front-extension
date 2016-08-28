@@ -38,9 +38,11 @@
     case "off":
       path = IMG.status.off;
       break;
-    case "default":
-      // TODO: Adjust defaultOn/defaultOff depending on global setting
+    case "defaultOn":
       path = IMG.status.defaultOn;
+      break;
+    case "defaultOff":
+      path = IMG.status.defaultOff;
       break;
     }
 
@@ -116,14 +118,28 @@
     syncStorage.set(items);
   });
 
+  function addScript(tabId) {
+    chrome.tabs.sendMessage(tabId, {
+      task: "add-script"
+    });
+  }
+
+  function removeScript(tabId) {
+    chrome.tabs.sendMessage(tabId, {
+      task: "remove-script"
+    });
+  }
+
   function shouldAddScript(tab) {
     syncStorage.get(['options', 'tabs'], function (items) {
       if (!items.options.browserSync.isDisabled && isValidUrl(tab.url)) {
-        var status;
+        var status,
+          task;
+
         if (items.tabs[tab.id]) {
-          status = items.tabs[tab.id].status || "default";
+          status = items.tabs[tab.id].status || "defaultOn";
         } else {
-          status = "default";
+          status = "defaultOn";
         }
 
         setIcon(status, tab.id);
@@ -133,13 +149,17 @@
           url: tab.url
         };
 
-        chrome.tabs.sendMessage(tab.id, {
-          task: "add-script"
-        });
+        if (status === "on" || status === "defaultOn") {
+          addScript(tab.id);
+        }
 
         syncStorage.set(items);
       }
     });
+  }
+
+  function defaultStatus() {
+    return "defaultOn";
   }
 
   function updateTabStatus(tabId) {
@@ -147,10 +167,12 @@
       if (items.tabs[tabId]) {
         var status = items.tabs[tabId].status;
 
-        if (status === "on") {
+        if (status === "on" || status === "defaultOn") {
           status = "off";
+          removeScript(tabId);
         } else {
           status = "on";
+          addScript(tabId);
         }
 
         setIcon(status, tabId);
@@ -161,15 +183,18 @@
     });
   }
 
+  function setPopup(url) {
+    // Doc: https://developer.chrome.com/extensions/browserAction#method-setPopup
+    chrome.browserAction.setPopup({
+      popup: url
+    });
+  }
+
+  /*******************************/
+  /** ALL EVENT LISTENERS BELOW **/
+  /*******************************/
 
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    //    if (changeInfo.status === "loading") {
-    //      chrome.tabs.sendMessage(tabId, {
-    //        task: "add-identifier",
-    //        data: OPTIONS.VERSION
-    //      });
-    //    }
-
     if (changeInfo.status === "complete") {
       //      console.debug('Updated page.', tabId, changeInfo, tab, tab.url);
 
@@ -186,13 +211,6 @@
       }
     });
   });
-
-  function setPopup(url) {
-    // Doc: https://developer.chrome.com/extensions/browserAction#method-setPopup
-    chrome.browserAction.setPopup({
-      popup: url
-    });
-  }
 
   chrome.browserAction.onClicked.addListener(function (tab) {
     var CONTROL_TIME = 400;
