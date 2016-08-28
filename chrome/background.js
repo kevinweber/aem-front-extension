@@ -9,10 +9,10 @@
     },
     IMG = {
       status: {
-        defaultOn: "img/icons/icon-reload-on.png",
-        defaultOff: "img/icons/icon-reload-off.png",
-        on: "img/icons/icon-reload-on-blue.png",
-        off: "img/icons/icon-reload-off-blue.png"
+        defaultOn: "img/icons/icon-reload-on-blue.png",
+        defaultOff: "img/icons/icon-reload-off-blue.png",
+        on: "img/icons/icon-reload-on.png",
+        off: "img/icons/icon-reload-off.png"
       }
     },
     FLAGS = {
