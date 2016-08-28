@@ -39,14 +39,14 @@
   },
 
   "icons": {
-    "16": "img/icon16.png",
-    "24": "img/icon24.png",
-    "48": "img/icon48.png",
-    "240": "img/icon240.png"
+    "16": "img/logo/16.png",
+    "24": "img/logo/24.png",
+    "48": "img/logo/48.png",
+    "240": "img/logo/240.png"
   },
 
   "browser_action": {
-    "default_icon": "img/icon24.png"
+    "default_icon": "img/icons/icon-default.png"
   },
 
   "permissions": [
