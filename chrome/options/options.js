@@ -6,11 +6,14 @@
     event: "popup-opened"
   });
 
-  var storage,
+  var IDS = {
+      defaultStatus: 'browsersync-default-status'
+    },
+    storage,
     currentTab;
 
   function initOptions() {
-    document.getElementById('browsersync-status').checked = storage.options.browserSync.isDisabled;
+    document.getElementById(IDS.defaultStatus).checked = storage.options.reloadByDefault;
   }
 
   function loadCurrentTab() {
@@ -32,9 +35,21 @@
 
   function setBrowserSyncStatus() {
     chrome.storage.sync.get('options', function (storage) {
-      var status = document.getElementById('browsersync-status').checked;
+      var select = document.getElementById(IDS.defaultStatus),
+        status;
 
-      storage.options.browserSync.isDisabled = status;
+      status = select.options[select.selectedIndex].value;
+
+      switch (status) {
+      case "on":
+        status = true;
+        break;
+      case "off":
+        status = false;
+        break;
+      }
+
+      storage.options.reloadByDefault = status;
 
       chrome.runtime.sendMessage({
         task: "update-storage",
@@ -111,7 +126,7 @@
   }
 
   function initEvents() {
-    document.getElementById('browsersync-status')
+    document.getElementById(IDS.defaultStatus)
       .addEventListener('change', setBrowserSyncStatus);
 
     document.getElementById('wcm-disabled')

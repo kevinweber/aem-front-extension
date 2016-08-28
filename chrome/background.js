@@ -21,15 +21,32 @@
     FLAGS = {
       iconClicked: false,
       popupOpened: false
-    };
+    },
+    globalDefaultStatus;
 
   function clearStorage() {
     console.info("Storage cleared.");
     chrome.storage.sync.clear();
   }
 
+  function setGlobalDefaultStatus(option) {
+    if (option === false) {
+      globalDefaultStatus = "defaultOff";
+    } else {
+      globalDefaultStatus = "defaultOn";
+    }
+  }
+
+  function getGlobalDefaultStatus() {
+    return globalDefaultStatus;
+  }
+
   function setIcon(status, tabId) {
     var path;
+
+    if (status === "default") {
+      status = getGlobalDefaultStatus();
+    }
 
     switch (status) {
     case "on":
@@ -106,12 +123,14 @@
 
     // Set version number
     items.extension = items.extension || {};
+    // TODO: Clear storage if stored version is below current version
     items.extension.version = OPTIONS.VERSION;
 
     // Set up default options
     items.options = items.options || {};
-    items.options.browserSync = items.options.browserSync || {};
-    items.options.browserSync.isDisabled = items.options.browserSync.isDisabled || false;
+    if (items.options.reloadByDefault !== false) {
+      items.options.reloadByDefault = items.options.reloadByDefault || true;
+    }
 
     items.tabs = items.tabs || {};
 
@@ -130,36 +149,44 @@
     });
   }
 
-  function shouldAddScript(tab) {
-    syncStorage.get(['options', 'tabs'], function (items) {
-      if (!items.options.browserSync.isDisabled && isValidUrl(tab.url)) {
-        var status,
-          task;
+  /**
+   * A tab can have a status of either:
+   * - true
+   * - false
+   * - "default" (falls back to whatever the global default is, thus either on or off)
+   */
+  function updateTab(tab, items) {
+    var status,
+      task;
 
-        if (items.tabs[tab.id]) {
-          status = items.tabs[tab.id].status || "defaultOn";
-        } else {
-          status = "defaultOn";
-        }
+    if (items.tabs[tab.id]) {
+      status = items.tabs[tab.id].status || "default";
+    } else {
+      status = "default";
+    }
 
-        setIcon(status, tab.id);
+    setIcon(status, tab.id);
 
-        items.tabs[tab.id] = {
-          status: status,
-          url: tab.url
-        };
+    items.tabs[tab.id] = {
+      status: status,
+      url: tab.url
+    };
 
-        if (status === "on" || status === "defaultOn") {
-          addScript(tab.id);
-        }
+    if (status === "on" || (status === "default" && getGlobalDefaultStatus() === "defaultOn")) {
+      addScript(tab.id);
+    }
 
-        syncStorage.set(items);
-      }
-    });
+    syncStorage.set(items);
   }
 
-  function defaultStatus() {
-    return "defaultOn";
+  function shouldAddScript(tab) {
+    syncStorage.get(['options', 'tabs'], function (items) {
+      setGlobalDefaultStatus(items.options.reloadByDefault);
+
+      if (isValidUrl(tab.url)) {
+        updateTab(tab, items);
+      }
+    });
   }
 
   function updateTabStatus(tabId) {
@@ -167,7 +194,7 @@
       if (items.tabs[tabId]) {
         var status = items.tabs[tabId].status;
 
-        if (status === "on" || status === "defaultOn") {
+        if (status === "on" || (status === "default" && getGlobalDefaultStatus() === "defaultOn")) {
           status = "off";
           removeScript(tabId);
         } else {
