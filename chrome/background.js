@@ -5,7 +5,7 @@
 
   var syncStorage = chrome.storage.sync,
     OPTIONS = {
-      VERSION: chrome.app.getDetails().version
+      VERSION: chrome.runtime.getManifest().version
     },
     IMG = {
       status: {

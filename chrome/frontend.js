@@ -43,7 +43,6 @@
   });
 
   document.addEventListener("DOMContentLoaded", function () {
-    // TODO: Hard-coding the version here for now. We can alternatively open a connection, see http://stackoverflow.com/a/31731351/3266345
-    injectIdentifier("0.0.1.2");
+    injectIdentifier(chrome.runtime.getManifest().version);
   });
 }());
