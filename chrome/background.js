@@ -7,6 +7,14 @@
     OPTIONS = {
       VERSION: chrome.app.getDetails().version
     },
+    IMG = {
+      status: {
+        defaultOn: "img/icons/icon-reload-on.png",
+        defaultOff: "img/icons/icon-reload-off.png",
+        on: "img/icons/icon-reload-on-blue.png",
+        off: "img/icons/icon-reload-off-blue.png"
+      }
+    },
     FLAGS = {
       iconClicked: false,
       popupOpened: false
@@ -15,6 +23,13 @@
   function clearStorage() {
     console.info("Storage cleared.");
     chrome.storage.sync.clear();
+  }
+
+  function setIcon(path, tabId) {
+    chrome.browserAction.setIcon({
+      path: path,
+      tabId: tabId
+    });
   }
 
   function splitUrl(url) {
@@ -101,6 +116,23 @@
     });
   }
 
+  function updateTabStatus(tabId) {
+    syncStorage.get(['tabs'], function (items) {
+      if (items.tabs[tabId]) {
+        if (items.tabs[tabId].status === "on") {
+          items.tabs[tabId].status = "off";
+          setIcon(IMG.status.off, tabId);
+        } else {
+          items.tabs[tabId].status = "on";
+          setIcon(IMG.status.on, tabId);
+        }
+
+        syncStorage.set(items);
+      }
+    });
+  }
+
+
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
     //    if (changeInfo.status === "loading") {
     //      chrome.tabs.sendMessage(tabId, {
@@ -147,7 +179,7 @@
     });
   }
 
-  chrome.browserAction.onClicked.addListener(function () {
+  chrome.browserAction.onClicked.addListener(function (tab) {
     var CONTROL_TIME = 400;
 
     if (FLAGS.iconClicked === false) {
@@ -160,7 +192,7 @@
         setPopup("");
 
         if (!FLAGS.popupOpened) {
-          console.log("TODO: UPDATE ICON");
+          updateTabStatus(tab.id);
         }
 
         FLAGS.iconClicked = false;
