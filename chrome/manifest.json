@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "AEM Front Extension",
   "short_name": "AEM Front",
-  "version": "0.1.0.2",
+  "version": "0.1.0.3",
   "author": "Kevin Weber",
   "homepage_url": "http://kevinw.de",
   "description": "Add BrowserSync script to all relevant AEM pages on localhost:4502. Plus extras to get work done faster.",
