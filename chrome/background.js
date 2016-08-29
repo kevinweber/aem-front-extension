@@ -180,7 +180,7 @@
     items.extension = items.extension || {};
 
     // Cleanup stored data from previous version of this extension
-    if (compareVersionNumbers(items.extension.version, "0.1") < 0) {
+    if (!items.extension.version || compareVersionNumbers(items.extension.version, "0.1") < 0) {
       clearStorage();
     }
     items.extension.version = OPTIONS.VERSION;
