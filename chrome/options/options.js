@@ -23,6 +23,10 @@
 
   function loadOptions() {
     chrome.storage.sync.get('options', function (items) {
+      if (!items.options) {
+        return;
+      }
+
       var value = items.options.reloadByDefault,
         selector;
 
