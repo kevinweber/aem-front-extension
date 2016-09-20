@@ -191,6 +191,10 @@
       items.options.reloadByDefault = items.options.reloadByDefault || true;
     }
 
+    if (items.options.useKeyboardToggle !== false) {
+      items.options.useKeyboardToggle = items.options.useKeyboardToggle || true;
+    }
+
     items.tabs = items.tabs || {};
 
     syncStorage.set(items);
@@ -267,11 +271,18 @@
   }
 
   function toggleMode(url) {
-    if (url.indexOf('editor.html/') !== -1 || url.indexOf('cf#/') !== -1) {
-      openWcmDisabled(url);
-    } else {
-      openWcmEdit(url);
-    }
+    syncStorage.get(['options'], function (items) {
+      // Only toggle if option is checked
+      if (!items.options.useKeyboardToggle) {
+        return;
+      }
+
+      if (url.indexOf('editor.html/') !== -1 || url.indexOf('cf#/') !== -1) {
+        openWcmDisabled(url);
+      } else {
+        openWcmEdit(url);
+      }
+    });
   }
 
   /**
@@ -387,7 +398,7 @@
   });
 
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
-    var url = message.url || sender.tab.url;
+    var url = message.url || (sender.tab && sender.tab.url);
 
     if (message.task === "update-storage") {
       syncStorage.set(message.data);

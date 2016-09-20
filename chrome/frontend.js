@@ -18,8 +18,8 @@
   }
 
   /**
-   * By injecting a unique code snippet, websites can see that the user is using this extension, and customize the UX
-   */
+  * By injecting a unique code snippet, websites can see that the user is using this extension, and customize the UX
+  */
   function injectIdentifier(version) {
     var element = document.createElement("div");
 
@@ -34,7 +34,7 @@
 
   function allowReload() {
     var script,
-      blockScript = document.getElementById(IDS.blockScript);
+    blockScript = document.getElementById(IDS.blockScript);
 
     if (blockScript) {
       blockScript.remove();
@@ -49,15 +49,15 @@
   }
 
   /**
-   * This is a hacky workaround. Issue:
-   * We can't simply block or close BrowserSync's websocket to prevent it from reloading the page.
-   * Instead, we trigger an alert that allows the user to cancel the reload manually.
-   *
-   * (We can execute '___browserSync___.socket.io.close()' in the Chrome Dev Tools command line and it will close the connection. However, this variable is not accessible from this JavaScript file. Or is it?)
-   */
+  * This is a hacky workaround. Issue:
+  * We can't simply block or close BrowserSync's websocket to prevent it from reloading the page.
+  * Instead, we trigger an alert that allows the user to cancel the reload manually.
+  *
+  * (We can execute '___browserSync___.socket.io.close()' in the Chrome Dev Tools command line and it will close the connection. However, this variable is not accessible from this JavaScript file. Or is it?)
+  */
   function blockReload() {
     var script,
-      unblockScript = document.getElementById(IDS.unblockScript);
+    unblockScript = document.getElementById(IDS.unblockScript);
 
     if (unblockScript) {
       unblockScript.remove();
@@ -106,10 +106,10 @@
 
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     switch (message.task) {
-    case "add-script":
+      case "add-script":
       addScriptBrowserSync();
       break;
-    case "remove-script":
+      case "remove-script":
       removeScriptBrowserSync();
       break;
     }

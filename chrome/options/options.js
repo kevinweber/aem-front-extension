@@ -7,7 +7,8 @@
   });
 
   var IDS = {
-      defaultStatus: 'browsersync-default-status'
+      defaultStatus: 'browsersync-default-status',
+      keyboardToggle: 'keyboard-toggle'
     },
     storage,
     currentTab;
@@ -27,20 +28,28 @@
         return;
       }
 
-      var value = items.options.reloadByDefault,
+      var optionReload = items.options.reloadByDefault,
+        optionKeyboardToggle = items.options.useKeyboardToggle,
         selector;
 
-      switch (value) {
+      switch (optionReload) {
       case true:
-        value = "on";
+        optionReload = "on";
         break;
       case false:
-        value = "off";
+        optionReload = "off";
         break;
       }
 
-      selector = '#' + IDS.defaultStatus + ' option[value="' + value + '"]';
+      // Set default status (select)
+      selector = '#' + IDS.defaultStatus + ' option[value="' + optionReload + '"]';
       document.querySelector(selector).setAttribute('selected', 'selected');
+
+      // Set keyboard "toggle" option (checkbox)
+      if (optionKeyboardToggle) {
+        selector = '#' + IDS.keyboardToggle;
+        document.querySelector(selector).setAttribute('checked', 'checked');
+      }
     });
   }
 
@@ -61,6 +70,19 @@
       }
 
       storage.options.reloadByDefault = status;
+
+      chrome.runtime.sendMessage({
+        task: "update-storage",
+        data: storage
+      });
+    });
+  }
+
+  function setKeyboard() {
+    chrome.storage.sync.get('options', function (storage) {
+      var element = document.getElementById(IDS.keyboardToggle);;
+
+      storage.options.useKeyboardToggle = element.checked;
 
       chrome.runtime.sendMessage({
         task: "update-storage",
@@ -92,6 +114,9 @@
   function initEvents() {
     document.getElementById(IDS.defaultStatus)
       .addEventListener('change', setBrowserSyncStatus);
+
+    document.getElementById(IDS.keyboardToggle)
+      .addEventListener('change', setKeyboard);
 
     document.getElementById('wcm-disabled')
       .addEventListener('click', openWcmDisabled);
