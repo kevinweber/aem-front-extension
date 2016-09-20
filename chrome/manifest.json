@@ -13,7 +13,7 @@
         "http://*/*",
         "https://*/*"
       ],
-      "js": ["base.js", "frontend.js"],
+      "js": ["base.js", "frontend/frontend.js"],
       "run_at": "document_start"
     }
   ],

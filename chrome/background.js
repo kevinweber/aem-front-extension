@@ -1,5 +1,12 @@
-// Background Page
-// Documentation: https://developer.chrome.com/extensions/event_pages
+/**
+ * Background Page
+ *
+ * Handle most of the logic here, especially everything related to storage and
+ * code that may be relevant for the frontend as well as the options page.
+ * Then communicate with them using chrome.tabs.sendMessage and chrome.runtime.onMessage.
+ *
+ * Documentation: https://developer.chrome.com/extensions/event_pages
+ */
 (function () {
   'use strict';
 
