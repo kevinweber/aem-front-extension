@@ -365,7 +365,7 @@
   });
 
   chrome.browserAction.onClicked.addListener(function (tab) {
-    var CONTROL_TIME = 400;
+    var CONTROL_TIME = 800;
 
     if (FLAGS.iconClicked === false) {
       FLAGS.iconClicked = true;
