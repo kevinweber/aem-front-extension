@@ -69,70 +69,23 @@
     });
   }
 
-  /*
-   * A very basic solution to add or replace a property and its value to a URL
-   * Source: https://gist.github.com/kevinweber/58a1b1bdcbab109018dc01a619f9b730
-   */
-  function replaceOrAddValue(query, variable, value) {
-    var findVariable = variable + "=",
-      variableIndex = query.indexOf(findVariable),
-      queryFirstPart,
-      queryLastPart;
-
-    // Check if value exists already. "-1" means it doesn't exist yet.
-    if (variableIndex === -1) {
-      query += query.indexOf('?') === -1 ? '?' : '&';
-      query += findVariable + value;
-    } else {
-      // Split query
-      queryFirstPart = query.substring(0, variableIndex);
-      queryLastPart = query.substring(variableIndex);
-
-      // Replace value of property
-      queryLastPart = queryLastPart.replace(/=[\w-]+/, '=' + value);
-
-      // Stick two parts back together
-      query = queryFirstPart + queryLastPart;
-    }
-
-    return query;
-  }
-
-  function openUrl(url) {
-    window.open(url, '_blank');
-  }
-
-  function openWcmDisabled() {
-    var url = currentTab.url;
-
-    url = url.replace('editor.html/', '');
-    url = url.replace('cf#/', '');
-    url = replaceOrAddValue(url, "wcmmode", "disabled");
-
-    openUrl(url);
-  }
-
-  function openWcmEdit() {
-    var url = currentTab.url,
-      firstPart = url.match(/^[a-z]*:\/\/[a-z.:\-0-9]+\//i)[0],
-      lastPart = url.substring(firstPart.length, url.length);
-
-    if (lastPart.indexOf("editor.html/") === -1) {
-      url = firstPart + "editor.html/" + lastPart;
-    } else {
-      url = firstPart + lastPart;
-    }
-
-    url = url.replace('&wcmmode=disabled', '');
-    url = url.replace('?wcmmode=disabled&', '?');
-    url = url.replace('?wcmmode=disabled', '');
-
-    openUrl(url);
-  }
-
   function clearStorage() {
     chrome.runtime.sendMessage({
       task: "clear-storage"
+    });
+  }
+
+  function openWcmDisabled() {
+    chrome.runtime.sendMessage({
+      task: "toggle-mode-disabled",
+      url: currentTab.url
+    });
+  }
+
+  function openWcmEdit() {
+    chrome.runtime.sendMessage({
+      task: "toggle-mode-edit",
+      url: currentTab.url
     });
   }
 

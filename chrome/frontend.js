@@ -9,6 +9,14 @@
     unblockScript: "aem-front-allow-reload"
   };
 
+  function keydown(event) {
+    if (event.metaKey === true && event.which === 69) { // 69 = "e"
+      chrome.runtime.sendMessage({
+        task: "toggle-mode"
+      });
+    }
+  }
+
   /**
    * By injecting a unique code snippet, websites can see that the user is using this extension, and customize the UX
    */
@@ -106,6 +114,8 @@
       break;
     }
   });
+
+  document.addEventListener("keydown", keydown);
 
   document.addEventListener("DOMContentLoaded", function () {
     injectIdentifier(chrome.runtime.getManifest().version);
