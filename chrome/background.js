@@ -226,8 +226,18 @@
   function replaceOrAddValue(query, variable, value) {
     var findVariable = variable + "=",
       variableIndex = query.indexOf(findVariable),
+      hashIndex = query.indexOf('#'),
+      hash = '',
+      splitQuery,
       queryFirstPart,
       queryLastPart;
+
+    // Extract hash
+    if (hashIndex > -1) {
+      splitQuery = query.split('#', 2);
+      query = splitQuery[0];
+      hash = '#' + splitQuery[1];
+    }
 
     // Check if value exists already. "-1" means it doesn't exist yet.
     if (variableIndex === -1) {
@@ -244,6 +254,9 @@
       // Stick two parts back together
       query = queryFirstPart + queryLastPart;
     }
+
+    // Add back the hash if there has been one
+    query += hash;
 
     return query;
   }
