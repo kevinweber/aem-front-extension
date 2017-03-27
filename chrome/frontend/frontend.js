@@ -3,16 +3,16 @@
   'use strict';
 
   var IDS = {
-    identifier: "aem-front-extension",
-    browserSyncScript: "aem-front-script",
-    blockScript: "aem-front-block-reload",
-    unblockScript: "aem-front-allow-reload"
+    identifier: 'aem-front-extension',
+    browserSyncScript: 'aem-front-script',
+    blockScript: 'aem-front-block-reload',
+    unblockScript: 'aem-front-allow-reload'
   };
 
   function keydown(event) {
-    if (event.metaKey === true && event.which === 69) { // 69 = "e"
+    if (event.metaKey === true && event.which === 69) { // 69 = 'e'
       chrome.runtime.sendMessage({
-        task: "toggle-mode"
+        task: 'toggle-mode'
       });
     }
   }
@@ -21,15 +21,15 @@
    * By injecting a unique code snippet, websites can see that the user is using this extension, and customize the UX
    */
   function injectIdentifier(version) {
-    var element = document.createElement("div");
+    var element = document.createElement('div');
 
-    element.setAttribute("id", IDS.identifier);
-    element.setAttribute("data-version", version);
+    element.setAttribute('id', IDS.identifier);
+    element.setAttribute('data-version', version);
     element.style.display = 'none';
 
     document.body.appendChild(element);
 
-    //    console.debug("Identifier element injected.");
+    //    console.debug('Identifier element injected.');
   }
 
   function allowReload() {
@@ -39,9 +39,9 @@
     if (blockScript) {
       blockScript.remove();
 
-      script = document.createElement("script");
+      script = document.createElement('script');
 
-      script.setAttribute("id", IDS.unblockScript);
+      script.setAttribute('id', IDS.unblockScript);
       script.text = 'window.onbeforeunload = null';
 
       document.body.appendChild(script);
@@ -63,9 +63,9 @@
       unblockScript.remove();
     }
 
-    script = document.createElement("script");
+    script = document.createElement('script');
 
-    script.setAttribute("id", IDS.blockScript);
+    script.setAttribute('id', IDS.blockScript);
     script.text = 'window.onbeforeunload = function() { return "Are you sure you want to reload this page?"; }';
 
     document.body.appendChild(script);
@@ -75,17 +75,17 @@
     var script;
 
     if (!document.getElementById(IDS.browserSyncScript)) {
-      script = document.createElement("script");
+      script = document.createElement('script');
 
-      script.setAttribute("id", IDS.browserSyncScript);
-      script.setAttribute("async", "true");
-      script.setAttribute("src", "http://" + location.hostname + ":3000/browser-sync/browser-sync-client.js?v=2.17.3");
+      script.setAttribute('id', IDS.browserSyncScript);
+      script.setAttribute('async', 'true');
+      script.setAttribute('src', 'http://' + location.hostname + ':3000/browser-sync/browser-sync-client.js?v=2.17.3');
 
       document.body.appendChild(script);
     }
 
     allowReload();
-    //    console.debug("BrowserSync script injected.");
+    //    console.debug('BrowserSync script injected.');
   }
 
   function removeScriptBrowserSync() {
@@ -106,18 +106,18 @@
 
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     switch (message.task) {
-    case "add-script":
+    case 'add-script':
       addScriptBrowserSync();
       break;
-    case "remove-script":
+    case 'remove-script':
       removeScriptBrowserSync();
       break;
     }
   });
 
-  document.addEventListener("keydown", keydown);
+  document.addEventListener('keydown', keydown);
 
-  document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener('DOMContentLoaded', function () {
     injectIdentifier(chrome.runtime.getManifest().version);
   });
 }());

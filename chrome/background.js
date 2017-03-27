@@ -16,14 +16,14 @@
     },
     IMG = {
       status: {
-        defaultOn: "img/icons/icon-reload-on-blue.png",
-        defaultOff: "img/icons/icon-reload-off-blue.png",
-        on: "img/icons/icon-reload-on.png",
-        off: "img/icons/icon-reload-off.png"
+        defaultOn: 'img/icons/icon-reload-on-blue.png',
+        defaultOff: 'img/icons/icon-reload-off-blue.png',
+        on: 'img/icons/icon-reload-on.png',
+        off: 'img/icons/icon-reload-off.png'
       }
     },
     POPUPS = {
-      global: "options/index.html"
+      global: 'options/index.html'
     },
     FLAGS = {
       iconClicked: false,
@@ -87,15 +87,15 @@
   }
 
   function clearStorage() {
-    console.info("Storage cleared.");
+    console.info('Storage cleared.');
     chrome.storage.sync.clear();
   }
 
   function setGlobalDefaultStatus(option) {
     if (option === false) {
-      globalDefaultStatus = "defaultOff";
+      globalDefaultStatus = 'defaultOff';
     } else {
-      globalDefaultStatus = "defaultOn";
+      globalDefaultStatus = 'defaultOn';
     }
   }
 
@@ -106,21 +106,21 @@
   function setIcon(status, tabId) {
     var path;
 
-    if (status === "default") {
+    if (status === 'default') {
       status = getGlobalDefaultStatus();
     }
 
     switch (status) {
-    case "on":
+    case 'on':
       path = IMG.status.on;
       break;
-    case "off":
+    case 'off':
       path = IMG.status.off;
       break;
-    case "defaultOn":
+    case 'defaultOn':
       path = IMG.status.defaultOn;
       break;
-    case "defaultOff":
+    case 'defaultOff':
       path = IMG.status.defaultOff;
       break;
     }
@@ -151,7 +151,7 @@
       i,
       l;
 
-    allowedPaths = ["content/", "cf#", "editor.html"];
+    allowedPaths = ['content/', 'cf#', 'editor.html'];
 
     for (i = 0, l = allowedPaths.length; i < l; i += 1) {
       if (path.substring(0, allowedPaths[i].length) === allowedPaths[i]) {
@@ -165,11 +165,11 @@
   function isValidUrl(url) {
     var urlObject = splitUrl(url);
 
-    if (urlObject.host !== "localhost") {
+    if (urlObject.host !== 'localhost') {
       return;
     }
 
-    if (urlObject.port !== "4502") {
+    if (urlObject.port !== '4502') {
       return;
     }
 
@@ -187,7 +187,7 @@
     items.extension = items.extension || {};
 
     // Cleanup stored data from previous version of this extension
-    if (!items.extension.version || compareVersionNumbers(items.extension.version, "0.1") < 0) {
+    if (!items.extension.version || compareVersionNumbers(items.extension.version, '0.1') < 0) {
       clearStorage();
     }
     items.extension.version = OPTIONS.VERSION;
@@ -209,13 +209,13 @@
 
   function addScript(tabId) {
     chrome.tabs.sendMessage(tabId, {
-      task: "add-script"
+      task: 'add-script'
     });
   }
 
   function removeScript(tabId) {
     chrome.tabs.sendMessage(tabId, {
-      task: "remove-script"
+      task: 'remove-script'
     });
   }
 
@@ -224,7 +224,7 @@
    * Source: https://gist.github.com/kevinweber/58a1b1bdcbab109018dc01a619f9b730
    */
   function replaceOrAddValue(query, variable, value) {
-    var findVariable = variable + "=",
+    var findVariable = variable + '=',
       variableIndex = query.indexOf(findVariable),
       hashIndex = query.indexOf('#'),
       hash = '',
@@ -239,7 +239,7 @@
       hash = '#' + splitQuery[1];
     }
 
-    // Check if value exists already. "-1" means it doesn't exist yet.
+    // Check if value exists already. '-1' means it doesn't exist yet.
     if (variableIndex === -1) {
       query += query.indexOf('?') === -1 ? '?' : '&';
       query += findVariable + value;
@@ -268,7 +268,7 @@
   function openWcmDisabled(url) {
     url = url.replace('editor.html/', '');
     url = url.replace('cf#/', '');
-    url = replaceOrAddValue(url, "wcmmode", "disabled");
+    url = replaceOrAddValue(url, 'wcmmode', 'disabled');
 
     openUrl(url);
   }
@@ -277,8 +277,8 @@
     var firstPart = url.match(/^[a-z]*:\/\/[a-z.:\-0-9]+\//i)[0],
       lastPart = url.substring(firstPart.length, url.length);
 
-    if (lastPart.indexOf("editor.html/") === -1) {
-      url = firstPart + "editor.html/" + lastPart;
+    if (lastPart.indexOf('editor.html/') === -1) {
+      url = firstPart + 'editor.html/' + lastPart;
     } else {
       url = firstPart + lastPart;
     }
@@ -316,9 +316,9 @@
       task;
 
     if (items.tabs[tab.id]) {
-      status = items.tabs[tab.id].status || "default";
+      status = items.tabs[tab.id].status || 'default';
     } else {
-      status = "default";
+      status = 'default';
     }
 
     setIcon(status, tab.id);
@@ -328,7 +328,7 @@
       url: tab.url
     };
 
-    if (status === "on" || (status === "default" && getGlobalDefaultStatus() === "defaultOn")) {
+    if (status === 'on' || (status === 'default' && getGlobalDefaultStatus() === 'defaultOn')) {
       addScript(tab.id);
     }
 
@@ -350,11 +350,11 @@
       if (items.tabs[tabId]) {
         var status = items.tabs[tabId].status;
 
-        if (status === "on" || (status === "default" && getGlobalDefaultStatus() === "defaultOn")) {
-          status = "off";
+        if (status === 'on' || (status === 'default' && getGlobalDefaultStatus() === 'defaultOn')) {
+          status = 'off';
           removeScript(tabId);
         } else {
-          status = "on";
+          status = 'on';
           addScript(tabId);
         }
 
@@ -378,7 +378,7 @@
   /*******************************/
 
   chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-    if (changeInfo.status === "complete") {
+    if (changeInfo.status === 'complete') {
       //      console.debug('Updated page.', tabId, changeInfo, tab, tab.url);
 
       shouldAddScript(tab);
@@ -405,7 +405,7 @@
 
       setTimeout(function () {
         // Always reset popup after CONTROL_TIME so we can update the icon if user doesn't double-click
-        setPopup("");
+        setPopup('');
 
         if (!FLAGS.popupOpened) {
           updateTabStatus(tab.id);
@@ -420,27 +420,27 @@
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
     var url = message.url || (sender.tab && sender.tab.url);
 
-    if (message.task === "update-storage") {
+    if (message.task === 'update-storage') {
       syncStorage.set(message.data);
     }
 
-    if (message.task === "clear-storage") {
+    if (message.task === 'clear-storage') {
       clearStorage();
     }
 
-    if (message.task === "toggle-mode") {
+    if (message.task === 'toggle-mode') {
       toggleMode(url);
     }
 
-    if (message.task === "toggle-mode-disabled") {
+    if (message.task === 'toggle-mode-disabled') {
       openWcmDisabled(url);
     }
 
-    if (message.task === "toggle-mode-edit") {
+    if (message.task === 'toggle-mode-edit') {
       openWcmEdit(url);
     }
 
-    if (message.event === "popup-opened") {
+    if (message.event === 'popup-opened') {
       FLAGS.popupOpened = true;
     }
   });

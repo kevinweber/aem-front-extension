@@ -3,7 +3,7 @@
   'use strict';
 
   chrome.runtime.sendMessage({
-    event: "popup-opened"
+    event: 'popup-opened'
   });
 
   var IDS = {
@@ -34,10 +34,10 @@
 
       switch (optionReload) {
       case true:
-        optionReload = "on";
+        optionReload = 'on';
         break;
       case false:
-        optionReload = "off";
+        optionReload = 'off';
         break;
       }
 
@@ -61,10 +61,10 @@
       status = select.options[select.selectedIndex].value;
 
       switch (status) {
-      case "on":
+      case 'on':
         status = true;
         break;
-      case "off":
+      case 'off':
         status = false;
         break;
       }
@@ -72,7 +72,7 @@
       storage.options.reloadByDefault = status;
 
       chrome.runtime.sendMessage({
-        task: "update-storage",
+        task: 'update-storage',
         data: storage
       });
     });
@@ -85,7 +85,7 @@
       storage.options.useKeyboardToggle = element.checked;
 
       chrome.runtime.sendMessage({
-        task: "update-storage",
+        task: 'update-storage',
         data: storage
       });
     });
@@ -93,20 +93,20 @@
 
   function clearStorage() {
     chrome.runtime.sendMessage({
-      task: "clear-storage"
+      task: 'clear-storage'
     });
   }
 
   function openWcmDisabled() {
     chrome.runtime.sendMessage({
-      task: "toggle-mode-disabled",
+      task: 'toggle-mode-disabled',
       url: currentTab.url
     });
   }
 
   function openWcmEdit() {
     chrome.runtime.sendMessage({
-      task: "toggle-mode-edit",
+      task: 'toggle-mode-edit',
       url: currentTab.url
     });
   }
