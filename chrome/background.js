@@ -305,6 +305,22 @@
     });
   }
 
+  function updateSourceUrl(tabId) {
+    syncStorage.get(['options'], function (items) {
+      var url = items.options.sourceUrl;
+
+      // Only toggle if option is checked
+      if (!url || url.length <= 5) {
+        return;
+      }
+
+      chrome.tabs.sendMessage(tabId, {
+        task: 'update-source-url',
+        data: url
+      });
+    });
+  }
+
   /**
    * A tab can have a status of either:
    * - true
@@ -438,6 +454,10 @@
 
     if (message.task === 'toggle-mode-edit') {
       openWcmEdit(url);
+    }
+
+    if (message.task === 'DOMContentLoaded') {
+      updateSourceUrl(sender.tab.id);
     }
 
     if (message.event === 'popup-opened') {

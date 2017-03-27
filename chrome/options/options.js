@@ -8,7 +8,8 @@
 
   var IDS = {
       defaultStatus: 'browsersync-default-status',
-      keyboardToggle: 'keyboard-toggle'
+      keyboardToggle: 'keyboard-toggle',
+      sourceUrl: 'script-source-url'
     },
     storage,
     currentTab;
@@ -30,6 +31,8 @@
 
       var optionReload = items.options.reloadByDefault,
         optionKeyboardToggle = items.options.useKeyboardToggle,
+        optionSourceUrl = items.options.sourceUrl,
+        element,
         selector;
 
       switch (optionReload) {
@@ -49,6 +52,13 @@
       if (optionKeyboardToggle) {
         selector = '#' + IDS.keyboardToggle;
         document.querySelector(selector).setAttribute('checked', 'checked');
+      }
+
+      element = document.getElementById(IDS.sourceUrl);
+      if (optionSourceUrl && optionSourceUrl.length > 5) {
+        element.value = optionSourceUrl;
+      } else {
+        element.setAttribute('placeholder', 'http://HOST:3000/browser-sync/browser-sync-client.js');
       }
     });
   }
@@ -83,6 +93,20 @@
       var element = document.getElementById(IDS.keyboardToggle);;
 
       storage.options.useKeyboardToggle = element.checked;
+
+      chrome.runtime.sendMessage({
+        task: 'update-storage',
+        data: storage
+      });
+    });
+  }
+
+  function setSourceUrl() {
+    chrome.storage.sync.get('options', function (storage) {
+      var element = document.getElementById(IDS.sourceUrl);;
+      var inputValue = element.value.trim();
+
+      storage.options.sourceUrl = element.value;
 
       chrome.runtime.sendMessage({
         task: 'update-storage',
@@ -126,6 +150,9 @@
 
     document.getElementById('clear-storage')
       .addEventListener('click', clearStorage);
+
+    document.getElementById(IDS.sourceUrl)
+      .addEventListener('input', setSourceUrl);
   }
 
   function init() {

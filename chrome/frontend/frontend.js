@@ -9,6 +9,34 @@
     unblockScript: 'aem-front-allow-reload'
   };
 
+  var DEFAULTS = {
+    scriptSource: 'http://HOST:3000/browser-sync/browser-sync-client.js?v=2.17.5'
+  };
+
+  var scriptSource;
+
+  function getSourceUrl() {
+    return renderScriptSource(scriptSource) || renderScriptSource(DEFAULTS.scriptSource);
+  }
+
+  function renderScriptSource(source) {
+    if (source && source.indexOf('HOST') > -1) {
+      source = source.replace('HOST', location.hostname);
+    }
+
+    return source;
+  }
+
+  function updateSourceUrl(url) {
+    var scriptTag = document.getElementById(IDS.browserSyncScript);
+
+    if (scriptTag) {
+      scriptTag.setAttribute('src', renderScriptSource(url));
+    } else {
+      scriptSource = renderScriptSource(url);
+    }
+  }
+
   function keydown(event) {
     if (event.metaKey === true && event.which === 69) { // 69 = 'e'
       chrome.runtime.sendMessage({
@@ -79,7 +107,7 @@
 
       script.setAttribute('id', IDS.browserSyncScript);
       script.setAttribute('async', 'true');
-      script.setAttribute('src', 'http://' + location.hostname + ':3000/browser-sync/browser-sync-client.js?v=2.17.3');
+      script.setAttribute('src', getSourceUrl());
 
       document.body.appendChild(script);
     }
@@ -112,6 +140,9 @@
     case 'remove-script':
       removeScriptBrowserSync();
       break;
+    case 'update-source-url':
+      updateSourceUrl(message.data);
+      break;
     }
   });
 
@@ -119,5 +150,9 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     injectIdentifier(chrome.runtime.getManifest().version);
+
+    chrome.runtime.sendMessage({
+      task: 'DOMContentLoaded'
+    });
   });
 }());
