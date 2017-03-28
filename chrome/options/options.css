@@ -47,6 +47,32 @@ a {
   color: #2c2c29;
 }
 
+p {
+  line-height: 1.25;
+}
+
+input[type="text"] {
+  display: block;
+  width: 100%;
+}
+
+input[type="checkbox"] {
+  margin-right: 0.5rem;
+}
+
+.label-info {
+  display: block;
+  margin-top: 0.25rem;
+  width: 100%;
+}
+
+.label-text {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.25rem;
+  width: 100%;
+}
+
 .clear {
   display: block;
 }
