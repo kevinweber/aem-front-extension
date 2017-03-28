@@ -57,8 +57,6 @@
       element = document.getElementById(IDS.sourceUrl);
       if (optionSourceUrl && optionSourceUrl.length > 5) {
         element.value = optionSourceUrl;
-      } else {
-        element.setAttribute('placeholder', 'http://HOST:3000/browser-sync/browser-sync-client.js');
       }
     });
   }
