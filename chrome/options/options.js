@@ -113,40 +113,11 @@
     });
   }
 
-  function setSourceUrl() {
+  function storeInputText(element, slotName) {
     chrome.storage.sync.get('options', function (storage) {
-      var element = document.getElementById(IDS.sourceUrl);;
       var inputValue = element.value.trim();
 
-      storage.options.sourceUrl = element.value;
-
-      chrome.runtime.sendMessage({
-        task: 'update-storage',
-        data: storage
-      });
-    });
-  }
-
-  function setDomainPort() {
-    chrome.storage.sync.get('options', function (storage) {
-      var element = document.getElementById(IDS.domainPort);;
-      var inputValue = element.value.trim();
-
-      storage.options.domainPort = element.value;
-
-      chrome.runtime.sendMessage({
-        task: 'update-storage',
-        data: storage
-      });
-    });
-  }
-
-  function setAllowedPaths() {
-    chrome.storage.sync.get('options', function (storage) {
-      var element = document.getElementById(IDS.allowedPaths);;
-      var inputValue = element.value.trim();
-
-      storage.options.allowedPaths = element.value;
+      storage.options[slotName] = element.value;
 
       chrome.runtime.sendMessage({
         task: 'update-storage',
@@ -175,6 +146,10 @@
     });
   }
 
+  function handleInputText(element, slotName) {
+    element.addEventListener('input', storeInputText.bind({}, element, slotName));
+  }
+
   function initEvents() {
     document.getElementById(IDS.defaultStatus)
       .addEventListener('change', setBrowserSyncStatus);
@@ -191,14 +166,9 @@
     document.getElementById('clear-storage')
       .addEventListener('click', clearStorage);
 
-    document.getElementById(IDS.sourceUrl)
-      .addEventListener('input', setSourceUrl);
-
-    document.getElementById(IDS.domainPort)
-      .addEventListener('input', setDomainPort);
-
-    document.getElementById(IDS.allowedPaths)
-      .addEventListener('input', setAllowedPaths);
+    handleInputText(document.getElementById(IDS.sourceUrl), 'sourceUrl');
+    handleInputText(document.getElementById(IDS.domainPort), 'domainPort');
+    handleInputText(document.getElementById(IDS.allowedPaths), 'allowedPaths');
   }
 
   function init() {
