@@ -10,7 +10,7 @@
       defaultStatus: 'browsersync-default-status',
       keyboardToggle: 'keyboard-toggle',
       sourceUrl: 'script-source-url',
-      domainPort: 'script-domain-port',
+      domains: 'script-domain-port',
       allowedPaths: 'script-allowed-paths'
     },
     storage,
@@ -34,7 +34,7 @@
       var optionReload = items.options.reloadByDefault,
         optionKeyboardToggle = items.options.useKeyboardToggle,
         optionSourceUrl = items.options.sourceUrl,
-        optionDomainPort = items.options.domainPort,
+        optionDomainPort = items.options.domains,
         optionAllowedPaths = items.options.allowedPaths,
         element,
         selector;
@@ -63,13 +63,13 @@
         element.value = optionSourceUrl;
       }
 
-      element = document.getElementById(IDS.domainPort);
-      if (optionDomainPort && optionDomainPort.length > 1) {
+      element = document.getElementById(IDS.domains);
+      if (optionDomainPort && optionDomainPort.length > 0) {
         element.value = optionDomainPort;
       }
 
       element = document.getElementById(IDS.allowedPaths);
-      if (optionAllowedPaths && optionAllowedPaths.length > 1) {
+      if (optionAllowedPaths && optionAllowedPaths.length > 0) {
         element.value = optionAllowedPaths;
       }
     });
@@ -167,7 +167,7 @@
       .addEventListener('click', clearStorage);
 
     handleInputText(document.getElementById(IDS.sourceUrl), 'sourceUrl');
-    handleInputText(document.getElementById(IDS.domainPort), 'domainPort');
+    handleInputText(document.getElementById(IDS.domains), 'domains');
     handleInputText(document.getElementById(IDS.allowedPaths), 'allowedPaths');
   }
 

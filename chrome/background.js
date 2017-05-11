@@ -146,12 +146,9 @@
     return urlObject;
   }
 
-  function isValidPath(path) {
-    var allowedPaths,
-      i,
+  function isValidPath(path, allowedPaths) {
+    var i,
       l;
-
-    allowedPaths = ['content/', 'cf#', 'editor.html'];
 
     for (i = 0, l = allowedPaths.length; i < l; i += 1) {
       if (path.substring(0, allowedPaths[i].length) === allowedPaths[i]) {
@@ -159,25 +156,40 @@
       }
     }
 
+    if (allowedPaths.indexOf('*') > -1) {
+      return true;
+    }
+
     return false;
   }
 
-  function isValidUrl(url) {
+  function isValidUrl(url, options) {
     var urlObject = splitUrl(url);
 
-    if (urlObject.host !== 'localhost') {
-      return;
+    var testDomains = options.domains || 'localhost:4502';
+    var domainsArray = testDomains.split(/\,\s*/g);
+
+    var testPaths = options.allowedPaths || 'content/, cf#, editor.html';
+    var pathsArray = testPaths.split(/\,\s*/g);
+
+    var matchesDomain = false;
+    var matchesPath = false;
+
+    if (domainsArray.indexOf('*') > -1) {
+      matchesDomain = true;
+    } else if (domainsArray.indexOf(urlObject.host) > -1) {
+      matchesDomain = true;
+    } else if (domainsArray.indexOf(urlObject.port) > -1) {
+      matchesDomain = true;
+    } else if (domainsArray.indexOf(urlObject.host + ':' + urlObject.port) > -1) {
+      matchesDomain = true;
     }
 
-    if (urlObject.port !== '4502') {
-      return;
+    if (isValidPath(urlObject.path, pathsArray)) {
+      matchesPath = true
     }
 
-    if (!isValidPath(urlObject.path)) {
-      return;
-    }
-
-    return true;
+    return matchesDomain && matchesPath;
   }
 
   syncStorage.get(null, function (items) {
@@ -355,7 +367,7 @@
     syncStorage.get(['options', 'tabs'], function (items) {
       setGlobalDefaultStatus(items.options.reloadByDefault);
 
-      if (isValidUrl(tab.url)) {
+      if (isValidUrl(tab.url, items.options)) {
         updateTab(tab, items);
       }
     });

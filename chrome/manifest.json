@@ -5,7 +5,7 @@
   "version": "0.2.1",
   "author": "Kevin Weber",
   "homepage_url": "http://kevinw.de",
-  "description": "Add BrowserSync script to all relevant AEM pages on localhost:4502. Plus extras to get work done faster.",
+  "description": "Add BrowserSync script to all relevant AEM pages. Plus extras to get work done faster.",
 
   "content_scripts": [
     {
