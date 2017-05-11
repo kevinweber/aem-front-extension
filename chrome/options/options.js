@@ -9,7 +9,9 @@
   var IDS = {
       defaultStatus: 'browsersync-default-status',
       keyboardToggle: 'keyboard-toggle',
-      sourceUrl: 'script-source-url'
+      sourceUrl: 'script-source-url',
+      domainPort: 'script-domain-port',
+      allowedPaths: 'script-allowed-paths'
     },
     storage,
     currentTab;
@@ -32,6 +34,8 @@
       var optionReload = items.options.reloadByDefault,
         optionKeyboardToggle = items.options.useKeyboardToggle,
         optionSourceUrl = items.options.sourceUrl,
+        optionDomainPort = items.options.domainPort,
+        optionAllowedPaths = items.options.allowedPaths,
         element,
         selector;
 
@@ -57,6 +61,16 @@
       element = document.getElementById(IDS.sourceUrl);
       if (optionSourceUrl && optionSourceUrl.length > 5) {
         element.value = optionSourceUrl;
+      }
+
+      element = document.getElementById(IDS.domainPort);
+      if (optionDomainPort && optionDomainPort.length > 1) {
+        element.value = optionDomainPort;
+      }
+
+      element = document.getElementById(IDS.allowedPaths);
+      if (optionAllowedPaths && optionAllowedPaths.length > 1) {
+        element.value = optionAllowedPaths;
       }
     });
   }
@@ -113,6 +127,34 @@
     });
   }
 
+  function setDomainPort() {
+    chrome.storage.sync.get('options', function (storage) {
+      var element = document.getElementById(IDS.domainPort);;
+      var inputValue = element.value.trim();
+
+      storage.options.domainPort = element.value;
+
+      chrome.runtime.sendMessage({
+        task: 'update-storage',
+        data: storage
+      });
+    });
+  }
+
+  function setAllowedPaths() {
+    chrome.storage.sync.get('options', function (storage) {
+      var element = document.getElementById(IDS.allowedPaths);;
+      var inputValue = element.value.trim();
+
+      storage.options.allowedPaths = element.value;
+
+      chrome.runtime.sendMessage({
+        task: 'update-storage',
+        data: storage
+      });
+    });
+  }
+
   function clearStorage() {
     chrome.runtime.sendMessage({
       task: 'clear-storage'
@@ -151,6 +193,12 @@
 
     document.getElementById(IDS.sourceUrl)
       .addEventListener('input', setSourceUrl);
+
+    document.getElementById(IDS.domainPort)
+      .addEventListener('input', setDomainPort);
+
+    document.getElementById(IDS.allowedPaths)
+      .addEventListener('input', setAllowedPaths);
   }
 
   function init() {
