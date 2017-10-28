@@ -25,10 +25,6 @@
     POPUPS = {
       global: 'options/index.html'
     },
-    FLAGS = {
-      iconClicked: false,
-      popupOpened: false
-    },
     globalDefaultStatus;
 
   function isPositiveInteger(x) {
@@ -394,13 +390,6 @@
     });
   }
 
-  function setPopup(url) {
-    // Doc: https://developer.chrome.com/extensions/browserAction#method-setPopup
-    chrome.browserAction.setPopup({
-      popup: url
-    });
-  }
-
   /*******************************/
   /** ALL EVENT LISTENERS BELOW **/
   /*******************************/
@@ -424,25 +413,10 @@
   });
 
   chrome.browserAction.onClicked.addListener(function (tab) {
-    var CONTROL_TIME = 800;
-
-    if (FLAGS.iconClicked === false) {
-      FLAGS.iconClicked = true;
-
-      setPopup(POPUPS.global);
-
-      setTimeout(function () {
-        // Always reset popup after CONTROL_TIME so we can update the icon if user doesn't double-click
-        setPopup('');
-
-        if (!FLAGS.popupOpened) {
-          updateTabStatus(tab.id);
-        }
-
-        FLAGS.iconClicked = false;
-        FLAGS.popupOpened = false;
-      }, CONTROL_TIME);
-    }
+    // Doc: https://developer.chrome.com/extensions/browserAction#method-setPopup
+    chrome.browserAction.setPopup({
+      popup: POPUPS.global
+    });
   });
 
   chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
@@ -460,6 +434,10 @@
       toggleMode(url);
     }
 
+    if (message.task === 'change-tab-status') {
+      updateTabStatus(message.currentTab.id);
+    }
+
     if (message.task === 'toggle-mode-disabled') {
       openWcmDisabled(url);
     }
@@ -470,10 +448,6 @@
 
     if (message.task === 'DOMContentLoaded') {
       updateSourceUrl(sender.tab.id);
-    }
-
-    if (message.event === 'popup-opened') {
-      FLAGS.popupOpened = true;
     }
   });
 }());

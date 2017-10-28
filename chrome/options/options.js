@@ -75,6 +75,13 @@
     });
   }
 
+  function changeTabStatus() {
+    chrome.runtime.sendMessage({
+      currentTab: currentTab,
+      task: 'change-tab-status'
+    });
+  }
+
   function setBrowserSyncStatus() {
     chrome.storage.sync.get('options', function (storage) {
       var select = document.getElementById(IDS.defaultStatus),
@@ -156,6 +163,9 @@
 
     document.getElementById(IDS.keyboardToggle)
       .addEventListener('change', setKeyboard);
+
+    document.getElementById('change-tab-status')
+      .addEventListener('click', changeTabStatus);
 
     document.getElementById('wcm-disabled')
       .addEventListener('click', openWcmDisabled);
